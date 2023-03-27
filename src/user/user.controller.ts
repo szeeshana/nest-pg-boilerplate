@@ -49,8 +49,8 @@ export class UserController {
   }
 
   @Get('all')
-  async find(@Query() { offset, limit }: PaginationParams) {
-    return this.userService.find('findPaginate', {}, { offset, limit });
+  async find() {
+    return this.userService.findAll();
   }
 
   @Get('me')

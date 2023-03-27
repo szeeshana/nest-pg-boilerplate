@@ -1,6 +1,6 @@
-export const finddd = async (
+export const findGeneric = async (
   repository,
-  type: 'find' | 'findPaginate' | 'findOne' | 'filter' | 'filterOne',
+  type: 'find' | 'findPaginate' | 'findOne' | 'filter' | 'filterOne' | 'count',
   options: any = {},
   paginateOptions?: { offset?: number; limit?: number },
 ) => {
@@ -32,6 +32,9 @@ export const finddd = async (
       return repository.find({
         where: options,
       });
+      break;
+    case 'count':
+      return repository.count();
       break;
     default:
       break;
