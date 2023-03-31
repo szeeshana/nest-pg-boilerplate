@@ -5,11 +5,11 @@ export class UpdateUserDto {
   @IsString()
   @IsOptional()
   @IsNotEmpty()
-  first_name: string;
+  firstName: string;
 
   @ApiProperty({ required: false })
   @IsString()
   @IsOptional()
   @IsNotEmpty()
-  last_name: string;
+  lastName: string;
 }

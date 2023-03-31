@@ -1,40 +1,62 @@
-export const findGeneric = async (
+import {
+  Between,
+  Equal,
+  IsNull,
+  LessThan,
+  MoreThan,
+  MoreThanOrEqual,
+  Not,
+} from 'typeorm';
+
+export const genericService = async (
   repository,
-  type: 'find' | 'findPaginate' | 'findOne' | 'filter' | 'filterOne' | 'count',
-  options: any = {},
-  paginateOptions?: { offset?: number; limit?: number },
+  type:
+    | 'equal'
+    | 'isNull'
+    | 'lessThen'
+    | 'moreThan'
+    | 'moreThanOrEqual'
+    | 'findNot'
+    | 'Between',
+  columnName: String,
+  option1: String,
+  option2: String,
 ) => {
   switch (type) {
-    case 'find':
-      return repository.find();
-      break;
-    case 'findPaginate':
-      const [items, count] = await repository.findAndCount({
-        where: options,
-        order: {
-          id: 'ASC',
-        },
-        skip: paginateOptions.offset,
-        take: paginateOptions.limit,
-      });
-
-      return {
-        items,
-        count,
-      };
-      break;
-    case 'findOne':
+    case 'equal':
       return repository.findOne({
-        where: options,
+        where: { id: Equal(option1) },
       });
       break;
-    case 'filter':
+    case 'isNull':
+      return repository.findOne({
+        where: { firstName: IsNull() },
+      });
+      break;
+    case 'findNot':
       return repository.find({
-        where: options,
+        where: { lastname: Not(option1) },
       });
       break;
-    case 'count':
-      return repository.count();
+    case 'lessThen':
+      return repository.find({
+        where: { id: LessThan(option1) },
+      });
+      break;
+    case 'moreThan':
+      return repository.find({
+        where: { id: MoreThan(option1) },
+      });
+      break;
+    case 'moreThanOrEqual':
+      return repository.find({
+        where: { id: MoreThanOrEqual(option1) },
+      });
+      break;
+    case 'Between':
+      return repository.find({
+        where: { createdAt: Between(option1, option2) },
+      });
       break;
     default:
       break;

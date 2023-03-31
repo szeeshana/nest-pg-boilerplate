@@ -39,15 +39,18 @@ export class AuthController {
     return this.authService.login(req.user);
   }
 
-  @UseInterceptors(CacheInterceptor)
-  @CacheKey('user_data')
-  @CacheTTL(100)
+  //Cache is only use for fixed or static data
+  // @UseInterceptors(CacheInterceptor)
+  // @CacheKey('user_data')
+  // @CacheTTL(100)
+
   @Post('register')
   async create(@Body() registerUserDto: RegisterUserDto) {
-    const userData = await this.userService.filterAll({
+    const userData = await this.userService.filter({
       email: registerUserDto.email,
       role: registerUserDto.role,
     });
+
     if (userData.length > 0) {
       throw new ConflictException(ERROR_MESSAGES.USER_DUPLICATE);
     }

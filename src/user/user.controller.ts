@@ -33,6 +33,7 @@ export class UserController {
     private readonly testGateway: TestGateway,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
+
   @Post()
   async create(@Body() createUserDto: CreateUserDto) {
     createUserDto.password = enCodePassword(createUserDto.password);
@@ -40,39 +41,16 @@ export class UserController {
   }
 
   @Get()
-  @UseGuards(AuthGuard('jwt'), new RoleGuard(UserType.ADMIN))
-  async findAll() {
-    this.testGateway.emitNotification('event', {
-      testData: { user: 'zeeshan', email: 'z@z.com' },
-    });
-    return this.userService.findAll();
-  }
-
-  @Get('all')
   async find() {
     return this.userService.findAll();
   }
 
-  @Get('me')
-  @UseGuards(AuthGuard('jwt'))
-  async findMe(@Req() req) {
-    const userData = await this.userService.findMe(req.user._id);
-    if (!userData) {
-      throw new NotFoundException();
-    }
-    return userData;
-  }
-
   @Get(':id')
-  @UseGuards(AuthGuard('jwt'))
   async findOne(@Param('id') id: string) {
-    const response = await this.userService.findOne(+id);
-    if (!response) throw new NotFoundException();
-    return response;
+    return this.userService.findOne(+id);
   }
 
   @Patch(':id')
-  @UseGuards(AuthGuard('jwt'))
   async update(
     @Req() req,
     @Param('id') id: string,
@@ -86,7 +64,6 @@ export class UserController {
   }
 
   @Delete(':id')
-  @UseGuards(AuthGuard('jwt'))
   async remove(@Param('id') id: string) {
     const userData = await this.userService.findOne(+id);
     if (!userData) {
@@ -94,4 +71,78 @@ export class UserController {
     }
     return this.userService.remove(+id);
   }
+
+  // @Get('pagination')
+  // async findPagination(@Query() paginationParams: PaginationParams) {
+  //   return this.userService.findPagination({
+  //     offset: paginationParams.offset,
+  //     limit: paginationParams.limit,
+  //   });
+  // }
+
+  // @Get()
+  // @UseGuards(AuthGuard('jwt'), new RoleGuard(UserType.ADMIN))
+  // async findAll() {
+  //   this.testGateway.emitNotification('event', {
+  //     testData: { user: 'zeeshan', email: 'z@z.com' },
+  //   });
+  //   return this.userService.findAll();
+  // }
+
+  // @Get('me')
+  // @UseGuards(AuthGuard('jwt'))
+  // async findMe(@Req() req) {
+  //   const userData = await this.userService.findMe(req.user.id);
+  //   if (!userData) {
+  //     throw new NotFoundException();
+  //   }
+  //   return userData;
+  // }
+  // @Get('count')
+  // @UseGuards(AuthGuard('jwt'))
+  // async findCount() {
+  //   const userData = await this.userService.findCount();
+  //   if (!userData) {
+  //     throw new NotFoundException();
+  //   }
+  //   return userData;
+  // }
+
+  // @Get('count-by')
+  // @UseGuards(AuthGuard('jwt'))
+  // async findCountBy() {
+  //   const userData = await this.userService.findCountBy({ role: 'ADMIN' });
+  //   if (!userData) {
+  //     return 0;
+  //   }
+  //   return userData;
+  // }
+
+  // @Get('find-and-count')
+  // @UseGuards(AuthGuard('jwt'))
+  // async findAndCount() {
+  //   const userData = await this.userService.findAndCount();
+  //   if (!userData) {
+  //     return 0;
+  //   }
+  //   return userData;
+  // }
+
+  // @Get('find-and-count-by')
+  // @UseGuards(AuthGuard('jwt'))
+  // async findAndCountBy() {
+  //   const userData = await this.userService.findAndCountBy({ role: 'ADMIN' });
+  //   if (!userData) {
+  //     return 0;
+  //   }
+  //   return userData;
+  // }
+
+  // @Get(':id')
+  // @UseGuards(AuthGuard('jwt'))
+  // async findOne(@Param('id') id: string) {
+  //   const response = await this.userService.findOne(+id);
+  //   if (!response) throw new NotFoundException();
+  //   return response;
+  // }
 }

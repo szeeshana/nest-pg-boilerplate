@@ -6,12 +6,12 @@ export class RegisterUserDto {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  first_name: string;
+  firstName: string;
 
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  last_name: string;
+  lastName: string;
 
   @ApiProperty()
   @IsString()

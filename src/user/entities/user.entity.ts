@@ -14,10 +14,10 @@ export class User extends BaseEntity {
   id: number;
 
   @Column()
-  first_name: string;
+  firstName: string;
 
   @Column()
-  last_name: string;
+  lastName: string;
 
   @Column()
   email: string;
@@ -30,6 +30,9 @@ export class User extends BaseEntity {
     enum: UserType,
   })
   role: UserType;
+
+  @Column({ default: false })
+  isDeleted: boolean;
 
   @CreateDateColumn()
   createdAt: Date;

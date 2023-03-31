@@ -1,11 +1,15 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm/dist';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { UserType } from 'src/user/enum/user.enum';
-import { findGeneric } from './../utils/helpers/generic.service.helper';
+import { findService } from '../utils/helpers/find.service.helper';
 
 @Injectable()
 export class UserService {
@@ -23,31 +27,137 @@ export class UserService {
   }
 
   findAll() {
-    return findGeneric(this.userRepository, 'find');
+    return findService(this.userRepository, 'find');
   }
-  filterAll(options: any) {
-    return this.userRepository.find({
-      where: options,
-    });
+
+  findPagination(paginateOptions: {}) {
+    return findService(
+      this.userRepository,
+      'findPaginate',
+      {},
+      paginateOptions,
+      [],
+    );
   }
+
   findOne(id: number) {
-    return this.userRepository.findOneBy({ id });
+    try {
+      return findService(this.userRepository, 'findOne', { id }).then((res) => {
+        if (res) return res;
+        else throw new NotFoundException();
+      });
+    } catch (error) {
+      throw new InternalServerErrorException();
+    }
+  }
+
+  filter(options: {}) {
+    try {
+      return findService(this.userRepository, 'filter', options);
+    } catch (error) {
+      throw new InternalServerErrorException();
+    }
+  }
+  findCount() {
+    try {
+      return findService(this.userRepository, 'count');
+    } catch (error) {
+      throw new InternalServerErrorException();
+    }
+  }
+
+  findCountBy(options: {}) {
+    try {
+      return findService(this.userRepository, 'countBy', options);
+    } catch (error) {
+      throw new InternalServerErrorException();
+    }
+  }
+
+  findAndCount() {
+    try {
+      return findService(this.userRepository, 'findAndCount');
+    } catch (error) {
+      throw new InternalServerErrorException();
+    }
+  }
+  findAndCountBy(options: {}) {
+    try {
+      return findService(this.userRepository, 'findAndCountBy', options);
+    } catch (error) {
+      throw new InternalServerErrorException();
+    }
+  }
+  findByIds(options: []) {
+    try {
+      return findService(
+        this.userRepository,
+        'findByIds',
+        {},
+        {},
+        options,
+      ).then((res) => {
+        if (res) return res;
+        else throw new NotFoundException();
+      });
+    } catch (error) {
+      throw new InternalServerErrorException();
+    }
+  }
+  exist(options: {}) {
+    try {
+      return findService(this.userRepository, 'findByIds', options);
+    } catch (error) {
+      throw new InternalServerErrorException();
+    }
   }
   findUser(email: string, role: UserType) {
-    return this.userRepository.findOne({
-      where: { email, role },
-      select: ['first_name', 'last_name', 'email', 'password', 'role'],
-    });
+    try {
+      return this.userRepository
+        .findOne({
+          where: { email, role, isDeleted: false },
+          select: ['firstName', 'lastName', 'email', 'password', 'role'],
+        })
+        .then((res) => {
+          if (res) return res;
+          else throw new NotFoundException();
+        });
+    } catch (error) {
+      throw new InternalServerErrorException();
+    }
   }
   findMe(id: number) {
-    return this.userRepository.findOneBy({ id });
+    try {
+      return findService(this.userRepository, 'findOne', { id: id }).then(
+        (res) => {
+          if (res) return res;
+          else throw new NotFoundException();
+        },
+      );
+    } catch (error) {
+      throw new InternalServerErrorException();
+    }
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {
-    return this.userRepository.update(id, updateUserDto);
+    try {
+      return this.userRepository.findOne({ where: { id } }).then((res) => {
+        if (res) return this.userRepository.save(updateUserDto);
+        else throw new NotFoundException();
+      });
+    } catch (error) {
+      throw new InternalServerErrorException();
+    }
   }
 
   remove(id: number) {
-    return this.userRepository.delete(id);
+    try {
+      return this.userRepository.findOne({ where: { id } }).then((res) => {
+        if (res) return this.userRepository.update({ id }, { isDeleted: true });
+        else throw new NotFoundException();
+      });
+    } catch (error) {
+      throw new InternalServerErrorException();
+    }
   }
 }
