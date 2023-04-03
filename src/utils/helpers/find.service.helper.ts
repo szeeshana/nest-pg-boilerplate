@@ -19,7 +19,7 @@ export const findService = async (
 ) => {
   switch (type) {
     case 'find':
-      return repository.find();
+      return repository.find({ where: options });
       break;
     case 'findPaginate':
       const [items, count] = await repository.findAndCount({

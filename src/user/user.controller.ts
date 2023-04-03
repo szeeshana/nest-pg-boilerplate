@@ -56,19 +56,11 @@ export class UserController {
     @Param('id') id: string,
     @Body() updateUserDto: UpdateUserDto,
   ) {
-    const userData = await this.userService.findOne(+id);
-    if (!userData) {
-      throw new NotFoundException();
-    }
     return this.userService.update(+id, updateUserDto);
   }
 
   @Delete(':id')
   async remove(@Param('id') id: string) {
-    const userData = await this.userService.findOne(+id);
-    if (!userData) {
-      throw new NotFoundException();
-    }
     return this.userService.remove(+id);
   }
 

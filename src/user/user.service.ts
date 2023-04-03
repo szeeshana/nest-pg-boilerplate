@@ -27,7 +27,7 @@ export class UserService {
   }
 
   findAll() {
-    return findService(this.userRepository, 'find');
+    return findService(this.userRepository, 'find', { isDeleted: false });
   }
 
   findPagination(paginateOptions: {}) {
@@ -42,7 +42,10 @@ export class UserService {
 
   findOne(id: number) {
     try {
-      return findService(this.userRepository, 'findOne', { id }).then((res) => {
+      return findService(this.userRepository, 'findOne', {
+        id,
+        isDeleted: false,
+      }).then((res) => {
         if (res) return res;
         else throw new NotFoundException();
       });
@@ -128,12 +131,13 @@ export class UserService {
   }
   findMe(id: number) {
     try {
-      return findService(this.userRepository, 'findOne', { id: id }).then(
-        (res) => {
-          if (res) return res;
-          else throw new NotFoundException();
-        },
-      );
+      return findService(this.userRepository, 'findOne', {
+        id: id,
+        isDeleted: false,
+      }).then((res) => {
+        if (res) return res;
+        else throw new NotFoundException();
+      });
     } catch (error) {
       throw new InternalServerErrorException();
     }
@@ -141,21 +145,25 @@ export class UserService {
 
   update(id: number, updateUserDto: UpdateUserDto) {
     try {
-      return this.userRepository.findOne({ where: { id } }).then((res) => {
-        if (res) return this.userRepository.save(updateUserDto);
-        else throw new NotFoundException();
-      });
+      return this.userRepository
+        .findOne({ where: { id, isDeleted: false } })
+        .then((res) => {
+          if (res) return this.userRepository.save(updateUserDto);
+          else throw new NotFoundException();
+        });
     } catch (error) {
       throw new InternalServerErrorException();
     }
   }
-
   remove(id: number) {
     try {
-      return this.userRepository.findOne({ where: { id } }).then((res) => {
-        if (res) return this.userRepository.update({ id }, { isDeleted: true });
-        else throw new NotFoundException();
-      });
+      return this.userRepository
+        .findOne({ where: { id, isDeleted: false } })
+        .then((res) => {
+          if (res)
+            return this.userRepository.update({ id }, { isDeleted: true });
+          else throw new NotFoundException();
+        });
     } catch (error) {
       throw new InternalServerErrorException();
     }

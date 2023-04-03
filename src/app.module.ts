@@ -10,7 +10,6 @@ import * as redisStore from 'cache-manager-redis-store';
 import { ScheduleModule } from '@nestjs/schedule';
 import { TestCron } from './utils/crons/test.cron';
 import { SocketsModule } from './sockets/sockets.module';
-import { RolesModule } from './roles/roles.module';
 
 @Module({
   imports: [
@@ -45,7 +44,6 @@ import { RolesModule } from './roles/roles.module';
     UserModule,
     AuthModule,
     SocketsModule,
-    RolesModule,
   ],
   controllers: [AppController],
   providers: [AppService, TestCron],
