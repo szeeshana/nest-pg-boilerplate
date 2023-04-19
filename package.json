@@ -26,7 +26,9 @@
     "migration:run:fake": "npm run typeorm -- migration:run --fake",
     "migration:revert:fake": "npm run typeorm -- migration:run --fake",
     "migration:create": "node ./node_modules/typeorm/cli  migration:create ./src/migrations/$NAME",
-    "migration:create:win": "node ./node_modules/typeorm/cli  migration:create"
+    "migration:create:win": "node ./node_modules/typeorm/cli  migration:create",
+    "seed": "node dist/seeder",
+    "seed:refresh": "node dist/seeder --refresh"
   },
   "dependencies": {
     "@nestjs/common": "^9.0.0",
@@ -45,6 +47,8 @@
     "cache-manager-redis-store": "^2.0.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",
+    "nestjs-console": "^8.0.0",
+    "nestjs-seeder": "^0.3.0",
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.1",
     "passport-local": "^1.0.0",
