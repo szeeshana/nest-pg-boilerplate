@@ -119,7 +119,7 @@ export class UserService {
       return this.userRepository
         .findOne({
           where: { email, role, isDeleted: false },
-          select: ['firstName', 'lastName', 'email', 'password', 'role'],
+          select: ['id', 'firstName', 'lastName', 'email', 'password', 'role'],
         })
         .then((res) => {
           if (res) return res;
@@ -148,7 +148,8 @@ export class UserService {
       return this.userRepository
         .findOne({ where: { id, isDeleted: false } })
         .then((res) => {
-          if (res) return this.userRepository.save(updateUserDto);
+          if (res)
+            return this.userRepository.save({ ...res, ...updateUserDto });
           else throw new NotFoundException();
         });
     } catch (error) {

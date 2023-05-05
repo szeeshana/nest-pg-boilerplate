@@ -7,12 +7,12 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.useGlobalPipes(new ValidationPipe({ transform: true }));
+  app.useGlobalPipes(new ValidationPipe({ transform: true, whitelist: true }));
   app.useGlobalInterceptors(new ResponseInterceptor());
   const configService = app.get<ConfigService>(ConfigService);
   const config = new DocumentBuilder()
-    .setTitle('Nest Mongo Boilerplate')
-    .setDescription('Nest Mogo Boilerplate API docs')
+    .setTitle('Postgres Boilerplate')
+    .setDescription('Postgres Boilerplate API docs')
     .setVersion('1.0')
     .addBearerAuth({
       type: 'http',

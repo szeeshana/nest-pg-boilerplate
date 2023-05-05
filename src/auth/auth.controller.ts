@@ -14,6 +14,7 @@ import {
   CacheTTL,
   Inject,
   CACHE_MANAGER,
+  BadRequestException,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
@@ -23,6 +24,7 @@ import { UserService } from './../user/user.service';
 import { RegisterUserDto } from './dto/register.user.dto';
 import { ERROR_MESSAGES } from 'src/utils/constants/generic.constants';
 import { ApiTags } from '@nestjs/swagger';
+import { UserType } from '../user/enum/user.enum';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -46,6 +48,9 @@ export class AuthController {
 
   @Post('register')
   async create(@Body() registerUserDto: RegisterUserDto) {
+    if (registerUserDto.role !== UserType.USER) {
+      throw new BadRequestException(ERROR_MESSAGES.ADMIN_CANNOT_CREATE);
+    }
     const userData = await this.userService.filter({
       email: registerUserDto.email,
       role: registerUserDto.role,
